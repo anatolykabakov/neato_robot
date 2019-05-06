@@ -95,8 +95,6 @@ class NeatoNode:
 
 		    self.robot.setMotors(self.cmd_vel[0], self.cmd_vel[1], max(abs(self.cmd_vel[0]),abs(self.cmd_vel[1])))
 
-            self.old_vel = self.cmd_vel
-
             # prepare laser scan
             scan.header.stamp = rospy.Time.now()
            
@@ -110,8 +108,6 @@ class NeatoNode:
             d_left =  (left - encoders[0])/1000.0
             d_right =  (right - encoders[1])/1000.0
             encoders = [left, right]
-
-	    #print d_left, d_right, encoders
 
             dx = (d_left+d_right)/2
             dth = (d_right-d_left)/(self.robot.base_width/1000.0)
