@@ -60,8 +60,7 @@ class NeatoNode:
         rospy.Subscriber("cmd_vel", Twist, self.cmdVelCb)
         self.scanPub = rospy.Publisher('base_scan', LaserScan, queue_size=10)
         self.odomPub = rospy.Publisher('odom', Odometry, queue_size=10)
-        #self.buttonPub = rospy.Publisher('button', Button, queue_size=10)
-        #self.sensorPub = rospy.Publisher('sensor', Sensor, queue_size=10)
+
         self.odomBroadcaster = TransformBroadcaster()
         self.cmd_vel = [0, 0]
         self.old_vel = self.cmd_vel
@@ -86,31 +85,15 @@ class NeatoNode:
 
         odom = Odometry(header=rospy.Header(frame_id="odom"), child_frame_id='base_link')
 
-        #button = Button()
-        #sensor = Sensor()
-        #self.robot.setBacklight(1)
-        #self.robot.setLED("Green")
         # main loop of driver
         r = rospy.Rate(20)
-        cmd_rate= self.CMD_RATE
-
         while not rospy.is_shutdown():
-            # notify if low batt
-            #if self.robot.getCharger() < 10:
-            #    print "battery low " + str(self.robot.getCharger()) + "%"
+
             # get motor encoder values
             left, right = self.robot.getMotors()
-            #print left
-            #print right
-
-            cmd_rate = cmd_rate-1
-            if cmd_rate ==0:
 		    # send updated movement commands
-		    #if self.cmd_vel != self.old_vel or self.cmd_vel == [0,0]:
-                    # max(abs(self.cmd_vel[0]),abs(self.cmd_vel[1])))
-		    #self.robot.setMotors(self.cmd_vel[0], self.cmd_vel[1], (abs(self.cmd_vel[0])+abs(self.cmd_vel[1]))/2)
+
 		    self.robot.setMotors(self.cmd_vel[0], self.cmd_vel[1], max(abs(self.cmd_vel[0]),abs(self.cmd_vel[1])))
-		    cmd_rate = self.CMD_RATE
 
             self.old_vel = self.cmd_vel
 
@@ -154,38 +137,15 @@ class NeatoNode:
             odom.twist.twist.linear.x = dx/dt
             odom.twist.twist.angular.z = dth/dt
 
-
-            # sensors
-            #lsb, rsb, lfb, rfb = self.robot.getDigitalSensors()
-
-            # buttons
-            #btn_soft, btn_scr_up, btn_start, btn_back, btn_scr_down = self.robot.getButtons()
-
-
             # publish everything
             self.odomBroadcaster.sendTransform((self.x, self.y, 0), (quaternion.x, quaternion.y, quaternion.z,
                                                                      quaternion.w), then, "base_link", "odom")
             self.scanPub.publish(scan)
             self.odomPub.publish(odom)
-            #button_enum = ("Soft_Button", "Up_Button", "Start_Button", "Back_Button", "Down_Button")
-            #sensor_enum = ("Left_Side_Bumper", "Right_Side_Bumper", "Left_Bumper", "Right_Bumper")
-            #for idx, b in enumerate((btn_soft, btn_scr_up, btn_start, btn_back, btn_scr_down)):
-            #    if b == 1:
-            #        button.value = b
-            #        button.name = button_enum[idx]
-            #        self.buttonPub.publish(button)
 
-            #for idx, b in enumerate((lsb, rsb, lfb, rfb)):
-            #    if b == 1:
-            #        sensor.value = b
-            #        sensor.name = sensor_enum[idx]
-            #        self.sensorPub.publish(sensor)
-            # wait, then do it again
             r.sleep()
 
         # shut down
-        #self.robot.setBacklight(0)
-        #self.robot.setLED("Off")
         self.robot.setLDS("off")
         self.robot.setTestMode("off")
 
