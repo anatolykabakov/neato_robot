@@ -60,7 +60,8 @@ class NeatoNode:
         rospy.Subscriber("cmd_vel", Twist, self.cmdVelCb)
         self.scanPub = rospy.Publisher('base_scan', LaserScan, queue_size=10)
         self.odomPub = rospy.Publisher('odom', Odometry, queue_size=10)
-
+        #self.buttonPub = rospy.Publisher('button', Button, queue_size=10)
+        #self.sensorPub = rospy.Publisher('sensor', Sensor, queue_size=10)
         self.odomBroadcaster = TransformBroadcaster()
         self.cmd_vel = [0, 0]
         self.old_vel = self.cmd_vel
@@ -85,15 +86,25 @@ class NeatoNode:
 
         odom = Odometry(header=rospy.Header(frame_id="odom"), child_frame_id='base_link')
 
+        #button = Button()
+        #sensor = Sensor()
+        #self.robot.setBacklight(1)
+        #self.robot.setLED("Green")
         # main loop of driver
         r = rospy.Rate(20)
-        while not rospy.is_shutdown():
+        cmd_rate= self.CMD_RATE
 
+        while not rospy.is_shutdown():
+            # notify if low batt
+            #if self.robot.getCharger() < 10:
+            #    print "battery low " + str(self.robot.getCharger()) + "%"
             # get motor encoder values
             left, right = self.robot.getMotors()
 
             # send updated movement commands
             self.robot.setMotors(self.cmd_vel[0], self.cmd_vel[1], max(abs(self.cmd_vel[0]),abs(self.cmd_vel[1])))
+
+            self.old_vel = self.cmd_vel
 
             # prepare laser scan
             scan.header.stamp = rospy.Time.now()
@@ -108,6 +119,8 @@ class NeatoNode:
             d_left =  (left - encoders[0])/1000.0
             d_right =  (right - encoders[1])/1000.0
             encoders = [left, right]
+
+	    #print d_left, d_right, encoders
 
             dx = (d_left+d_right)/2
             dth = (d_right-d_left)/(self.robot.base_width/1000.0)
@@ -132,6 +145,7 @@ class NeatoNode:
             odom.pose.pose.orientation = quaternion
             odom.twist.twist.linear.x = dx/dt
             odom.twist.twist.angular.z = dth/dt
+
 
             # publish everything
             self.odomBroadcaster.sendTransform((self.x, self.y, 0), (quaternion.x, quaternion.y, quaternion.z,
