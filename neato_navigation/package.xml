@@ -1,8 +1,8 @@
 <package>
-  <name>hcr_navigation</name>
+  <name>neato_navigation</name>
   <version>0.2.0</version>
   <description>
-    This package contains configuration and launch files for using the navigation stack with the HCR robot.
+    This package contains configuration and launch files for using the navigation stack with the Neato robot.
   </description>
   <author>Anatoly Kabakov</author>
   <maintainer email="anatoly.kabakov@mail.tu">Anatoly Kabakov</maintainer>
@@ -11,5 +11,5 @@
   
   <buildtool_depend>catkin</buildtool_depend>
 
-  <run_depend>hcr_node</run_depend>
+  <run_depend>neato_node</run_depend>
 </package>
