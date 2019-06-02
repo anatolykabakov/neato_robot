@@ -58,7 +58,7 @@ class NeatoNode:
         self.robot = Botvac(self.port)
 
         rospy.Subscriber("cmd_vel", Twist, self.cmdVelCb)
-        self.scanPub = rospy.Publisher('base_scan', LaserScan, queue_size=10)
+        self.scanPub = rospy.Publisher('scan', LaserScan, queue_size=10)
         self.odomPub = rospy.Publisher('odom', Odometry, queue_size=10)
         #self.buttonPub = rospy.Publisher('button', Button, queue_size=10)
         #self.sensorPub = rospy.Publisher('sensor', Sensor, queue_size=10)
@@ -75,7 +75,7 @@ class NeatoNode:
         then = rospy.Time.now()
 
         # things that don't ever change
-        scan_link = rospy.get_param('~frame_id', 'base_laser_link')
+        scan_link = rospy.get_param('~frame_id', 'laser_frame')
         scan = LaserScan(header=rospy.Header(frame_id=scan_link))
 
         scan.angle_min =0.0 
