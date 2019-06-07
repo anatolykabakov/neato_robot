@@ -1,6 +1,6 @@
-obstacle_range: 6.0
-raytrace_range: 8.5
-footprint: [[0.15, 0.15], [0.15, -0.15], [-0.15, -0.15], [-0.15, 0.15]]
+obstacle_range: 1.75
+raytrace_range: 5.0
+footprint: [[0.18, 0.18], [0.18, -0.18], [-0.08, -0.18], [-0.2, -0.060],[-0.2,0.060],[-0.08, 0.18]]
 map_topic: /map
 subscribe_to_updates: true
 observation_sources: laser_scan_sensor
