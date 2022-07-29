@@ -91,9 +91,9 @@ class NeatoNode:
 
             # get motor encoder values
             left, right = self.robot.getMotors()
-		    # send updated movement commands
 
-		    self.robot.setMotors(self.cmd_vel[0], self.cmd_vel[1], max(abs(self.cmd_vel[0]),abs(self.cmd_vel[1])))
+            # send updated movement commands
+            self.robot.setMotors(self.cmd_vel[0], self.cmd_vel[1], max(abs(self.cmd_vel[0]),abs(self.cmd_vel[1])))
 
             self.old_vel = self.cmd_vel
 
